@@ -10,15 +10,16 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
   });
   
   document.getElementById('printButton').addEventListener('click', function() {
-    let printable = document.getElementById("container").innerHTML;
-    let win = window.open(",");
-    win.document.write('<html>');
-    win.document.write('<body');
-    win.document.write(printable);
-    win.document.write('</body></html>');
-    // win.close();
-    win.print();
-    // window.print();
+    converttoPDF("puzzleContainer", "answerKeyContainer");
+    // let printable = document.getElementById("container").innerHTML;
+    // let win = window.open(",");
+    // win.document.write('<html>');
+    // win.document.write('<body');
+    // win.document.write(printable);
+    // win.document.write('</body></html>');
+    // // win.close();
+    // win.print();
+    // // window.print();
   });
   
   function generateWordSearch(words) {
@@ -107,3 +108,24 @@ document.getElementById('wordForm').addEventListener('submit', function(event) {
     container.appendChild(table);
   }
    
+  function converttoPDF(page1, page2) {
+    const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+  
+    // Render the first page (Puzzle)
+    pdf.html(document.getElementById(page1), {
+      callback: function(doc) {
+        // After the first page is rendered, add a new page for the second container
+        doc.addPage();
+        doc.setPage(2);
+        doc.html(document.getElementById(page1), {
+          callback: function (doc) {
+            doc.save();
+          }, x:10, y:10});
+        // Render the second page (Answer Key) on the new page
+        doc.save("puzzle.pdf");
+      },
+      x: 10,
+      y: 10,
+      autoPaging: 'text',
+    });
+  }
